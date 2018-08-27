@@ -11,6 +11,8 @@ module.exports = function(grunt) {
     const sort = grunt.option("sort") || false;
     const text = grunt.option("text");
 
+    const done = this.async();
+
     let contents = grunt.file.read(file);
 
     if (sort) {
@@ -36,6 +38,37 @@ module.exports = function(grunt) {
     grunt.file.write(file, contents);
 
     console.log(`[SUCCESS] Appended "${text}" to ${file}`);
+    done();
+  });
+
+  grunt.registerTask("append-index","Writes to './components/index.js'",function(componentName) {
+    componentName =
+    componentName ||
+    grunt.option("componentName") ||
+    grunt.option("component");
+
+    componentName = componentName[0].toUpperCase() + componentName.substr(1)
+
+    grunt.option("file", `src/components/index.js`);
+    grunt.option("sort", true);
+    grunt.option("text", `export * from './${componentName}'`);
+
+    grunt.task.run(`append`);
+  });
+
+  grunt.registerTask("append-css","Writes to './components/components.scss'",function(componentName) {
+    componentName =
+    componentName ||
+    grunt.option("componentName") ||
+    grunt.option("component");
+
+    componentName = componentName[0].toUpperCase() + componentName.substr(1)
+
+    grunt.option("file", `src/components/components.scss`);
+    grunt.option("sort", true);
+    grunt.option("text", `@import './${componentName}/styles.scss';`);
+
+    grunt.task.run(`append`);
   });
 
   grunt.registerTask("gen-component", "Generates Component", function(
@@ -51,7 +84,7 @@ module.exports = function(grunt) {
     if (!componentName) {
       console.error(`[FAILURE] - Missing component name`);
     } else {
-      componentName = componentName[0].toUppercase() + componentName.substr(1)
+      componentName = componentName[0].toUpperCase() + componentName.substr(1)
 
       const templatePath = `templates/ComponentTemplate.js`;
       const stylesTemplatePath = `templates/StylesTemplate.scss`;
@@ -77,11 +110,8 @@ module.exports = function(grunt) {
         grunt.file.write(writePath, contents);
         grunt.file.write(stylesWritePath, styleContents);
 
-        grunt.option("file", `src/components/index.js`);
-        grunt.option("sort", true);
-        grunt.option("text", `export * from './${componentName}'`);
-
-        grunt.task.run("append");
+        grunt.task.run(`append-index:${componentName}`);
+        grunt.task.run(`append-css:${componentName}`);
 
         if (
           grunt.file.exists(writePath) &&
