@@ -1,21 +1,26 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { Button } from 'reactstrap'
 import './App.css';
 
-import { Test } from './components'
+import { ThemeInputGroupWithLabel, ThemePanel } from './components'
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <Test />
+      <div className="main container">
+        <div className="row align-items-center">
+          <div className="col-md-6 offset-md-3">
+            <ThemePanel>
+              <div key="header">Login</div>
+              <div key="body">
+                <ThemeInputGroupWithLabel inputLabel="username" />
+                <ThemeInputGroupWithLabel inputLabel="password" />
+                <Button className="login" color="primary">Login</Button>
+                <Button color="danger">Sign Up</Button>
+              </div>
+            </ThemePanel>
+          </div>
+        </div>
       </div>
     );
   }
